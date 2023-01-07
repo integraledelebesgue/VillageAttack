@@ -1,6 +1,6 @@
 package integraledelebesgue.ooplab.element
 
-import integraledelebesgue.ooplab.engine.Properties
+import integraledelebesgue.ooplab.engine.GameProperties
 import kotlin.math.abs
 import kotlin.random.Random
 
@@ -14,7 +14,7 @@ data class Vector2D(val x: Int, val y: Int) {
     }
 
     companion object {
-        fun randomVectorInBounds(properties: Properties): Vector2D {
+        fun randomVectorInBounds(properties: GameProperties): Vector2D {
             return Vector2D(
                 abs(Random.nextInt()) % properties.width,
                 abs(Random.nextInt()) % properties.height

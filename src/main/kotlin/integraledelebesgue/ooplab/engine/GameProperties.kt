@@ -1,6 +1,6 @@
 package integraledelebesgue.ooplab.engine
 
-data class Properties(
+data class GameProperties(
     val gold: Int,
     val width: Int,
     val height: Int

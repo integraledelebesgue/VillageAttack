@@ -10,7 +10,8 @@ sealed interface CreatureFactory {
     fun create(position: Vector2D)
 
     companion object {
-        val globalStorage: MutableSet<Creature> = HashSet()
+        val attackersStorage: MutableSet<Creature> = HashSet()
+        val defendersStorage: MutableSet<Creature> = HashSet()
     }
 }
 
@@ -18,9 +19,9 @@ object WarewolfFactory: CreatureFactory {
     override val storage: MutableSet<Creature> = HashSet()
 
     override fun create(position: Vector2D) {
-        val newCreature: Creature = Creature.Warewolf(position, CreatureProperties.Companion.WarewolfProperties())
+        val newCreature: Creature = Creature.Warewolf(position, WarewolfProperties)
         storage.add(newCreature)
-        CreatureFactory.globalStorage.add(newCreature)
+        CreatureFactory.attackersStorage.add(newCreature)
     }
 }
 
@@ -28,9 +29,9 @@ object MummyFactory: CreatureFactory {
     override val storage: MutableSet<Creature> = HashSet()
 
     override fun create(position: Vector2D) {
-        val newCreature: Creature = Creature.Mummy(position, CreatureProperties.Companion.MummyProperties())
+        val newCreature: Creature = Creature.Mummy(position, MummyProperties)
         WarewolfFactory.storage.add(newCreature)
-        CreatureFactory.globalStorage.add(newCreature)
+        CreatureFactory.attackersStorage.add(newCreature)
     }
 }
 
@@ -38,9 +39,9 @@ object ZombieFactory: CreatureFactory {
     override val storage: MutableSet<Creature> = HashSet()
 
     override fun create(position: Vector2D) {
-        val newCreature: Creature = Creature.Zombie(position, CreatureProperties.Companion.ZombieProperties())
+        val newCreature: Creature = Creature.Zombie(position, ZombieProperties)
         WarewolfFactory.storage.add(newCreature)
-        CreatureFactory.globalStorage.add(newCreature)
+        CreatureFactory.attackersStorage.add(newCreature)
     }
 }
 
@@ -48,9 +49,9 @@ object ArcherFactory: CreatureFactory {
     override val storage: MutableSet<Creature> = HashSet()
 
     override fun create(position: Vector2D) {
-        val newCreature: Creature = Creature.Archer(position, CreatureProperties.Companion.ArcherProperties())
+        val newCreature: Creature = Creature.Archer(position, ArcherProperties)
         WarewolfFactory.storage.add(newCreature)
-        CreatureFactory.globalStorage.add(newCreature)
+        CreatureFactory.defendersStorage.add(newCreature)
     }
 }
 
@@ -58,9 +59,9 @@ object CrossbowerFactory: CreatureFactory {
     override val storage: MutableSet<Creature> = HashSet()
 
     override fun create(position: Vector2D) {
-        val newCreature: Creature = Creature.Crossbower(position, CreatureProperties.Companion.CrossbowerProperties())
+        val newCreature: Creature = Creature.Crossbower(position, CrossbowerProperties)
         WarewolfFactory.storage.add(newCreature)
-        CreatureFactory.globalStorage.add(newCreature)
+        CreatureFactory.defendersStorage.add(newCreature)
     }
 }
 
@@ -68,8 +69,8 @@ object MageFactory: CreatureFactory {
     override val storage: MutableSet<Creature> = HashSet()
 
     override fun create(position: Vector2D) {
-        val newCreature: Creature = Creature.Mage(position, CreatureProperties.Companion.MageProperties())
+        val newCreature: Creature = Creature.Mage(position, MageProperties)
         WarewolfFactory.storage.add(newCreature)
-        CreatureFactory.globalStorage.add(newCreature)
+        CreatureFactory.defendersStorage.add(newCreature)
     }
 }

@@ -6,7 +6,3 @@ enum class FightStyle {
     MAGIC
 }
 
-enum class Team {
-    ATTACKERS,
-    DEFENDERS
-}

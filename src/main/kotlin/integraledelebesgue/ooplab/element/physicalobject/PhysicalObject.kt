@@ -10,7 +10,9 @@ sealed class PhysicalObject(position: Vector2D, properties: PhysicalObjectProper
         }
     }
 
-    class MonsterTerritory(position: Vector2D, properties: PhysicalObjectProperties): PhysicalObject(position, properties)
+    class MonsterArea(position: Vector2D, properties: PhysicalObjectProperties): PhysicalObject(position, properties)
 
-    class FinalTerritory(position: Vector2D, properties: PhysicalObjectProperties): PhysicalObject(position, properties)
+    class CastleArea(position: Vector2D, properties: PhysicalObjectProperties): PhysicalObject(position, properties)
+
+    class FinalArea(position: Vector2D, properties: PhysicalObjectProperties): PhysicalObject(position, properties)
 }

@@ -3,13 +3,23 @@ package integraledelebesgue.ooplab.element.creature
 abstract class CreatureProperties(
     val health: Int,
     val damage: Int,
-    val attacksPerTurn: Int,
+    val attackSpeed: Int,
     val movesPerTurn: Int,
     val fightStyle: FightStyle,
     val range: Int,
     val team: Team,  // Used to distinguish attackers from defenders. Expandable for multiple concurrent attacking teams, battle royale etc.
+    val price: Int,
     val behaviourProvider: Any  // TODO - introduce providers and change type
-)
+) {
+    init {
+        require(health > 0) {"Health must be positive, got $health"}
+        require(damage >= 0) {"Damage must be non-negative, got $damage"}
+        require(attackSpeed > 0) {"Attack speed must be positive, got $attackSpeed"}
+        require(movesPerTurn > 0) {"Moves per turn must be positive, got $movesPerTurn"}
+        require(range > 0) {"Attack range must be positive, got $range"}
+        require(price >= 0) {"Price should be non-negative, got $price"}
+    }
+}
 
 object WarewolfProperties : CreatureProperties(
     100,
@@ -19,6 +29,7 @@ object WarewolfProperties : CreatureProperties(
     FightStyle.MELEE,
     1,
     Team.ATTACKERS,
+    10,
     0
 )
 
@@ -30,6 +41,7 @@ object MummyProperties : CreatureProperties(
     FightStyle.MELEE,
     2,
     Team.ATTACKERS,
+    10,
     0
 )
 
@@ -41,6 +53,7 @@ object ZombieProperties : CreatureProperties(
     FightStyle.MELEE,
     3,
     Team.ATTACKERS,
+    10,
     0
 )
 
@@ -52,6 +65,7 @@ object ArcherProperties : CreatureProperties(
     FightStyle.RANGED,
     10,
     Team.DEFENDERS,
+    10,
     0
 )
 
@@ -63,6 +77,7 @@ object CrossbowerProperties : CreatureProperties(
     FightStyle.RANGED,
     15,
     Team.DEFENDERS,
+    10,
     0
 )
 
@@ -74,6 +89,7 @@ object MageProperties : CreatureProperties(
     FightStyle.MAGIC,
     10,
     Team.DEFENDERS,
+    10,
     0
 )
 

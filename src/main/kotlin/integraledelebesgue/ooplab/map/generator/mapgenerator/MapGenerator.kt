@@ -4,6 +4,8 @@ import integraledelebesgue.ooplab.element.Vector2D
 import integraledelebesgue.ooplab.element.physicalobject.WallFactory
 import integraledelebesgue.ooplab.engine.GameProperties
 import org.jetbrains.kotlinx.multik.api.linspace
+import org.jetbrains.kotlinx.multik.api.math.cos
+import org.jetbrains.kotlinx.multik.api.math.sin
 import org.jetbrains.kotlinx.multik.api.mk
 import org.jetbrains.kotlinx.multik.api.zeros
 import org.jetbrains.kotlinx.multik.default.math.DefaultMathEx.cos
@@ -18,62 +20,83 @@ import kotlin.math.*
 import kotlin.random.Random
 
 
-class MapGenerator(gameProperties: GameProperties) {
+sealed class MapGenerator(gameProperties: GameProperties) {
 
-    private val width: Int = gameProperties.width
-    private val height: Int = gameProperties.height
+    protected val width: Int = gameProperties.width
+    protected val height: Int = gameProperties.height
 
     private val a: Int = (0.3 * width).toInt()
     private val b: Int = (0.3 * height).toInt()
 
-    private val centre: Vector2D = Vector2D(width / 2, height / 2)
+    protected val centre: Vector2D = Vector2D(width / 2, height / 2)
 
-    fun generateSimpleWall() {
-        val domain: D1Array<Double> = mk.linspace<Double>(0.0, 2*PI, (PI * (1.5 * (a + b) - sqrt((a*b).toDouble()))).toInt())
-        val xCoordinates: DoubleArray = cos(domain).times(a.toDouble()).plus(centre.x.toDouble()).toDoubleArray()
-        val yCoordinates: DoubleArray = sin(domain).times(b.toDouble()).plus(centre.y.toDouble()).toDoubleArray()
+    private val pointsCount: Int = (PI * (1.5 * (a + b) - sqrt((a * b).toDouble()))).toInt()
 
-        xCoordinates.zip(yCoordinates).forEach {
-            apply {
-                WallFactory.create(Vector2D(it.first.toInt(), it.second.toInt()))
+    protected val domain: D1Array<Double> = mk.linspace(0.0, 2 * PI, pointsCount)
+
+    abstract fun generate()
+
+    protected fun buildWalls(xCoordinates: D1Array<Double>, yCoordinates: D1Array<Double>) {
+        xCoordinates
+            .toDoubleArray()
+            .zip(yCoordinates.toDoubleArray())
+            .forEach {
+                apply {
+                    WallFactory.create(Vector2D(it.first.toInt(), it.second.toInt()))
+                }
             }
-        }
     }
 
-    fun generateFancydWall() {
-        // Preparation
-        val domain: D1Array<Double> = mk.linspace<Double>(0.0, 2*PI, (PI * (1.5 * (a + b) - sqrt((a*b).toDouble()))).toInt())
-        val xCoordinates: NDArray<Double, D1> = mk.zeros(domain.size)
-        val yCoordinates: NDArray<Double, D1> = mk.zeros(domain.size)
 
-        // Inverse-Fourier-transform-like closed curve generation
-        for(i in 1..5) {
-            xCoordinates.plusAssign(
-                if(Random.nextBoolean()) cos(domain.plus(java.util.Random().nextGaussian())).map{it.pow(i)}.times(2 * Random.nextDouble() - 1.0)
-                else sin(domain.plus(java.util.Random().nextGaussian())).map{it.pow(i)}.times(2 * Random.nextDouble() - 1.0)
-            )
+    class SimpleGenerator(gameProperties: GameProperties) : MapGenerator(gameProperties) {
 
-            yCoordinates.plusAssign(
-                if(Random.nextBoolean()) cos(domain.plus(java.util.Random().nextGaussian())).times(2 * Random.nextDouble() - 1.0)
-                else sin(domain.plus(java.util.Random().nextGaussian())).times(2 * Random.nextDouble() - 1.0)
+        override fun generate() {
+            buildWalls(
+                generatePoints(0.0),
+                generatePoints(PI/2)
             )
         }
 
-        // Scaling to map fit ~60% of map width/height
-        val sizeFactor: Double = max(
-            xCoordinates.map { abs(it) }.max()!!,
-            yCoordinates.map { abs(it) }.max()!!
-        ).div(0.3 * max(width, height))
+        private fun generatePoints(phase: Double): D1Array<Double> {
+            return domain
+                .plus(phase)
+                .cos()
+                .times(0.3 * max(width, height))
+        }
 
-        xCoordinates.timesAssign(sizeFactor)
-        yCoordinates.timesAssign(sizeFactor)
+    }
 
-        // Discretization, wall generation
-        xCoordinates.toDoubleArray().zip(yCoordinates.toDoubleArray()).forEach {
-            apply {
-                WallFactory.create(Vector2D(it.first.toInt(), it.second.toInt()))
+
+    class FancyGenerator(gameProperties: GameProperties) : MapGenerator(gameProperties) {
+
+        override fun generate() {
+            buildWalls(
+                generatePoints().plus(centre.x.toDouble()),
+                generatePoints().plus(centre.y.toDouble())
+            )
+        }
+
+        private fun generatePoints(): D1Array<Double> {
+            val coordinates: NDArray<Double, D1> = mk.zeros(domain.size)
+
+            // Inverse-Fourier-transform-like closed curve generation
+            for (i in 1..5) {
+                coordinates.plusAssign(
+                    domain
+                        .plus(java.util.Random().nextGaussian())
+                        .apply { if (Random.nextBoolean()) this.cos() else this.sin() }
+                        .map { it.pow(i) }
+                        .times(2 * Random.nextDouble() - 1.0)
+                )
             }
+
+            // Scaling to map size
+            coordinates.timesAssign(coordinates.max()!!.div(3.0 * max(width, height)))
+
+            return coordinates
+
         }
+
     }
 
 }

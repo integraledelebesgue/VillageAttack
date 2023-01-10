@@ -16,6 +16,7 @@ dependencies {
     testImplementation(kotlin("test"))
     implementation("org.jetbrains.kotlinx:multik-core:0.2.1")
     implementation("org.jetbrains.kotlinx:multik-default:0.2.1")
+    implementation("org.choco-solver:choco-solver:4.10.10")
 }
 
 tasks.test {

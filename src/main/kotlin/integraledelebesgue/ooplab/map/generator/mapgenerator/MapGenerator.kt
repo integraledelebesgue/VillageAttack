@@ -8,8 +8,6 @@ import org.jetbrains.kotlinx.multik.api.math.cos
 import org.jetbrains.kotlinx.multik.api.math.sin
 import org.jetbrains.kotlinx.multik.api.mk
 import org.jetbrains.kotlinx.multik.api.zeros
-import org.jetbrains.kotlinx.multik.default.math.DefaultMathEx.cos
-import org.jetbrains.kotlinx.multik.default.math.DefaultMathEx.sin
 import org.jetbrains.kotlinx.multik.ndarray.data.D1
 import org.jetbrains.kotlinx.multik.ndarray.data.D1Array
 import org.jetbrains.kotlinx.multik.ndarray.data.NDArray

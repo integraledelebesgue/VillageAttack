@@ -1,9 +1,8 @@
 package integraledelebesgue.ooplab.engine
 
-import integraledelebesgue.ooplab.map.generator.defenders.OptimalDefenderPositionsProvider
-import integraledelebesgue.ooplab.map.generator.defenders.RandomDefenderPositionsProvider
-import integraledelebesgue.ooplab.map.generator.castle.FancyCastleProvider
-import integraledelebesgue.ooplab.map.generator.castle.SimpleCastleProvider
+import integraledelebesgue.ooplab.map.generator.castle.CastleProvider
+import integraledelebesgue.ooplab.map.generator.defenders.DefendersProvider
+
 
 enum class CastleMode {
     SimpleCastle,
@@ -11,8 +10,8 @@ enum class CastleMode {
 
     fun toProvider(gameProperties: GameProperties) {
         when(this) {
-            SimpleCastle -> SimpleCastleProvider
-            FancyCastle -> FancyCastleProvider
+            SimpleCastle -> CastleProvider.SimpleCastleProvider
+            FancyCastle -> CastleProvider.FancyCastleProvider
         }
     }
 }
@@ -23,8 +22,8 @@ enum class DefenderPositionsMode {
 
     fun toProvider(gameProperties: GameProperties) {
         when(this) {
-            RandomPositions -> RandomDefenderPositionsProvider
-            OptimalPositions -> OptimalDefenderPositionsProvider
+            RandomPositions -> DefendersProvider.RandomPositionsDefendersProvider
+            OptimalPositions -> DefendersProvider.OptimalPositionsDefendersProvider
         }
     }
 }

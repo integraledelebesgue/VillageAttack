@@ -46,3 +46,4 @@ bin/
 /.idea/vcs.xml
 /.idea/workspace.xml
 /.idea/kotlinc.xml
+/.idea/kotlinScripting.xml

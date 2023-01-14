@@ -1,6 +1,8 @@
 package integraledelebesgue.ooplab.element.physicalobject
 
 enum class WallShape {
+    SINGLE,
+
     SINGLE_VERTICAL,
     SINGLE_HORIZONTAL,
 

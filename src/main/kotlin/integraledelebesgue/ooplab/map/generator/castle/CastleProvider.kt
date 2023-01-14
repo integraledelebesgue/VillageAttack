@@ -1,4 +1,4 @@
-package integraledelebesgue.ooplab.map.generator.mapgenerator
+package integraledelebesgue.ooplab.map.generator.castle
 
 import integraledelebesgue.ooplab.element.Vector2D
 import integraledelebesgue.ooplab.element.physicalobject.WallFactory
@@ -18,10 +18,10 @@ import kotlin.math.*
 import kotlin.random.Random
 
 
-sealed class MapGenerator(gameProperties: GameProperties) {
+sealed class CastleProvider {
 
-    protected val width: Int = gameProperties.width
-    protected val height: Int = gameProperties.height
+    protected val width: Int = GameProperties.width
+    protected val height: Int = GameProperties.height
 
     private val a: Int = (0.3 * width).toInt()
     private val b: Int = (0.3 * height).toInt()
@@ -45,8 +45,7 @@ sealed class MapGenerator(gameProperties: GameProperties) {
             }
     }
 
-
-    class SimpleGenerator(gameProperties: GameProperties) : MapGenerator(gameProperties) {
+    object SimpleCastleProvider : CastleProvider() {
 
         override fun generate() {
             buildWalls(
@@ -64,8 +63,7 @@ sealed class MapGenerator(gameProperties: GameProperties) {
 
     }
 
-
-    class FancyGenerator(gameProperties: GameProperties) : MapGenerator(gameProperties) {
+    object FancyCastleProvider : CastleProvider() {
 
         override fun generate() {
             buildWalls(
@@ -92,9 +90,7 @@ sealed class MapGenerator(gameProperties: GameProperties) {
             coordinates.timesAssign(coordinates.max()!!.div(3.0 * max(width, height)))
 
             return coordinates
-
         }
-
     }
-
 }
+

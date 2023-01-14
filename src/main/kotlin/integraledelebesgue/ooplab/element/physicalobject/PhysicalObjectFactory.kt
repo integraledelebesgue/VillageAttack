@@ -15,7 +15,7 @@ sealed interface PhysicalObjectFactory {
 }
 
 object WallFactory: PhysicalObjectFactory {
-    override val storage: MutableMap<Vector2D, PhysicalObject> = HashMap()
+    override val storage: MutableMap<Vector2D, PhysicalObject> = LinkedHashMap()
 
     override fun create(position: Vector2D) {
         if(storage.getOrDefault(position, null) != null)
@@ -24,6 +24,10 @@ object WallFactory: PhysicalObjectFactory {
         val newWall: PhysicalObject.Wall = PhysicalObject.Wall(position, WallProperties)
         storage[position] = newWall
         globalStorage[position] = newWall
+    }
+
+    fun setShapes() {
+        storage.values.forEach { (it as PhysicalObject.Wall).setShape() }
     }
 }
 

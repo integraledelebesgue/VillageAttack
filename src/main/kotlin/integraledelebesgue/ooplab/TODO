@@ -1,0 +1,18 @@
+1. Generator pozycji obrońców
+    1.1. Tylko na murach
+2. Umieszczanie potworów na pozycjach
+    2.1. Generowanie strefy potworów
+3. Ruch potworów
+    3.1. Kolizje
+    3.2. Warunki zakończenia
+    3.3. Schemat ruchu - naiwna heurystyka, graf stanów, algorytm genetyczny?
+4. Atak
+    4.1. Potwory - tylko w zwarciu
+    4.2. Obrońcy - tylko z dystansu
+    4.3. Kwestia zasięgu - graf pełny ważony?
+5. Graficzny interfejs:
+    5.1. Ekran główny?
+    5.2. Ekran gry
+6. Ładne ściany
+    6.1. Wyświetlanie różnych tekstur zależnie od wartości Shape
+

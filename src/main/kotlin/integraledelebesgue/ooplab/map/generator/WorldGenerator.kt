@@ -2,21 +2,16 @@ package integraledelebesgue.ooplab.map.generator
 
 import integraledelebesgue.ooplab.engine.GameProperties
 
-class WorldGenerator(gameProperties: GameProperties) {
+class WorldGenerator(val gameProperties: GameProperties) {
 
     fun generateMap() {
         generateWall()
-        generateWallShapes()
         generateMonsterTerritory()
         generateFinalTerritory()
         placeDefenders()
     }
 
     private fun generateWall() {
-
-    }
-
-    private fun generateWallShapes() {
 
     }
 

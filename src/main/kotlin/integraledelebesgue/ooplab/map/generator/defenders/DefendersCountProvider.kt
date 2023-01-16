@@ -10,61 +10,62 @@ import org.chocosolver.solver.search.strategy.selectors.variables.FirstFail
 import org.chocosolver.solver.search.strategy.selectors.variables.Smallest
 import org.chocosolver.solver.search.strategy.selectors.variables.VariableSelectorWithTies
 
-sealed class DefendersCountProvider {
+sealed interface DefendersCountProvider {
 
-    abstract fun generate(): List<Int>
+    fun generate(): List<Int>
 
-    object KnapsackDefendersCountProvider : DefendersCountProvider() {
+}
 
-        private val model: Model = Model("Defenders")
-        private var solver: Solver
 
-        private val count = model.intVarArray("count", Creature.defenders.size, 0, GameProperties.maxDefendersCount)
+object KnapsackDefendersCountProvider : DefendersCountProvider {
 
-        private val cost = Creature.properties
-            .filter { it.key in Creature.defenders }
-            .values
-            .map { it.price }
-            .toIntArray()
+    private val model: Model = Model("Defenders")
+    private var solver: Solver
 
-        private val damage = Creature.properties
-            .filter { it.key in Creature.defenders }
-            .values
-            .map { it.damage }
-            .toIntArray()
+    private val count = model.intVarArray("count", Creature.defenders.size, 0, GameProperties.maxDefendersCount)
 
-        private val total_cost =
-            model.intVar("total_cost", 0, GameProperties.maxDefendersCount * GameProperties.gold, true)
+    private val cost = Creature.properties
+        .filter { it.key in Creature.defenders }
+        .values
+        .map { it.price }
+        .toIntArray()
 
-        private val total_damage = model.intVar("total_damage", 0, 9999, true)
+    private val damage = Creature.properties
+        .filter { it.key in Creature.defenders }
+        .values
+        .map { it.damage }
+        .toIntArray()
 
-        init {
-            // Set all counts to 0
-            count.fill(model.intVar(0))
+    private val total_cost =
+        model.intVar("total_cost", 0, GameProperties.maxDefendersCount * GameProperties.gold, true)
 
-            // Constraints:
-            model.scalar(count, cost, "<=", GameProperties.gold).post()
-            model.scalar(count, cost, "=", total_cost).post()
-            model.scalar(count, damage, "=", total_damage)
+    private val total_damage = model.intVar("total_damage", 0, 9999, true)
 
-            model.setObjective(true, total_damage)
+    init {
+        // Set all counts to 0
+        count.fill(model.intVar(0))
 
-            solver = model.solver
+        // Constraints:
+        model.scalar(count, cost, "<=", GameProperties.gold).post()
+        model.scalar(count, cost, "=", total_cost).post()
+        model.scalar(count, damage, "=", total_damage)
 
-            solver.setSearch(
-                Search.intVarSearch(
-                    VariableSelectorWithTies(
-                        FirstFail(model), Smallest()
-                    ), IntDomainMiddle(false)
-                )
+        model.setObjective(true, total_damage)
+
+        solver = model.solver
+
+        solver.setSearch(
+            Search.intVarSearch(
+                VariableSelectorWithTies(
+                    FirstFail(model), Smallest()
+                ), IntDomainMiddle(false)
             )
-        }
+        )
+    }
 
-        override fun generate(): List<Int> {
-            while(solver.solve()) { /* Repeat until no further improvements are possible */ }
-            return count.map{it.value}
-        }
-
+    override fun generate(): List<Int> {
+        while(solver.solve()) { /* Repeat until no further improvements are possible */ }
+        return count.map{it.value}
     }
 
 }

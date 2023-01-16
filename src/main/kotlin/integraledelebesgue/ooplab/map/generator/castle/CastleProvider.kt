@@ -32,7 +32,7 @@ sealed class CastleProvider {
 
     protected val domain: D1Array<Double> = mk.linspace(0.0, 2 * PI, pointsCount)
 
-    abstract fun generate()
+    abstract suspend fun generate()
 
     protected fun buildWalls(xCoordinates: D1Array<Double>, yCoordinates: D1Array<Double>) {
         xCoordinates
@@ -45,52 +45,55 @@ sealed class CastleProvider {
             }
     }
 
-    object SimpleCastleProvider : CastleProvider() {
+}
 
-        override fun generate() {
-            buildWalls(
-                generatePoints(0.0),
-                generatePoints(PI/2)
-            )
-        }
 
-        private fun generatePoints(phase: Double): D1Array<Double> {
-            return domain
-                .plus(phase)
-                .cos()
-                .times(0.3 * max(width, height))
-        }
+object SimpleCastleProvider : CastleProvider() {
 
+    override suspend fun generate() {
+        buildWalls(
+            generatePoints(0.0),
+            generatePoints(PI/2)
+        )
     }
 
-    object FancyCastleProvider : CastleProvider() {
+    private fun generatePoints(phase: Double): D1Array<Double> {
+        return domain
+            .plus(phase)
+            .cos()
+            .times(0.3 * max(width, height))
+    }
 
-        override fun generate() {
-            buildWalls(
-                generatePoints().plus(centre.x.toDouble()),
-                generatePoints().plus(centre.y.toDouble())
+}
+
+
+object FancyCastleProvider : CastleProvider() {
+
+    override suspend fun generate() {
+        buildWalls(
+            generatePoints().plus(centre.x.toDouble()),
+            generatePoints().plus(centre.y.toDouble())
+        )
+    }
+
+    private fun generatePoints(): D1Array<Double> {
+        val coordinates: NDArray<Double, D1> = mk.zeros(domain.size)
+
+        // Inverse-Fourier-transform-like closed curve generation
+        for (i in 1..5) {
+            coordinates.plusAssign(
+                domain
+                    .plus(java.util.Random().nextGaussian())
+                    .apply { if (Random.nextBoolean()) this.cos() else this.sin() }
+                    .map { it.pow(i) }
+                    .times(2 * Random.nextDouble() - 1.0)
             )
         }
 
-        private fun generatePoints(): D1Array<Double> {
-            val coordinates: NDArray<Double, D1> = mk.zeros(domain.size)
+        // Scaling to map size
+        coordinates.timesAssign(coordinates.max()!!.div(3.0 * max(width, height)))
 
-            // Inverse-Fourier-transform-like closed curve generation
-            for (i in 1..5) {
-                coordinates.plusAssign(
-                    domain
-                        .plus(java.util.Random().nextGaussian())
-                        .apply { if (Random.nextBoolean()) this.cos() else this.sin() }
-                        .map { it.pow(i) }
-                        .times(2 * Random.nextDouble() - 1.0)
-                )
-            }
-
-            // Scaling to map size
-            coordinates.timesAssign(coordinates.max()!!.div(3.0 * max(width, height)))
-
-            return coordinates
-        }
+        return coordinates
     }
 }
 

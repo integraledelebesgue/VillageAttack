@@ -9,7 +9,7 @@ abstract class CreatureProperties(
     val range: Int,
     val team: Team,  // Used to distinguish attackers from defenders. Expandable for multiple concurrent attacking teams, battle royale etc.
     val price: Int,
-    val behaviourProvider: Any  // TODO - introduce providers and change type
+    //val behaviourProvider: Any  // TODO - introduce providers and change type
 ) {
     init {
         require(health > 0) {"Health must be positive, got $health"}
@@ -29,8 +29,7 @@ object WarewolfProperties : CreatureProperties(
     FightStyle.MELEE,
     1,
     Team.ATTACKERS,
-    10,
-    0
+    10
 )
 
 object MummyProperties : CreatureProperties(
@@ -41,8 +40,7 @@ object MummyProperties : CreatureProperties(
     FightStyle.MELEE,
     2,
     Team.ATTACKERS,
-    10,
-    0
+    10
 )
 
 object ZombieProperties : CreatureProperties(
@@ -53,8 +51,7 @@ object ZombieProperties : CreatureProperties(
     FightStyle.MELEE,
     3,
     Team.ATTACKERS,
-    10,
-    0
+    10
 )
 
 object ArcherProperties : CreatureProperties(
@@ -65,8 +62,7 @@ object ArcherProperties : CreatureProperties(
     FightStyle.RANGED,
     10,
     Team.DEFENDERS,
-    10,
-    0
+    10
 )
 
 object CrossbowerProperties : CreatureProperties(
@@ -77,8 +73,7 @@ object CrossbowerProperties : CreatureProperties(
     FightStyle.RANGED,
     15,
     Team.DEFENDERS,
-    10,
-    0
+    10
 )
 
 object MageProperties : CreatureProperties(
@@ -89,7 +84,6 @@ object MageProperties : CreatureProperties(
     FightStyle.MAGIC,
     10,
     Team.DEFENDERS,
-    10,
-    0
+    10
 )
 

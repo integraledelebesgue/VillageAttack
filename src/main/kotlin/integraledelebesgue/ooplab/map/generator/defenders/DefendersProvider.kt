@@ -5,9 +5,9 @@ import integraledelebesgue.ooplab.element.creature.Creature
 import integraledelebesgue.ooplab.element.physicalobject.WallFactory
 import kotlin.reflect.KClass
 
-sealed class DefendersProvider {
+sealed interface DefendersProvider {
 
-    abstract fun generate()
+    suspend fun generate()
 
     fun placeDefenders(defenderPositions: Map<KClass<out Creature>, List<Vector2D>>) {
         defenderPositions.forEach { (creatureClass, positions) ->
@@ -17,45 +17,45 @@ sealed class DefendersProvider {
         }
     }
 
+}
 
-    object RandomPositionsDefendersProvider : DefendersProvider() {
 
-        override fun generate() {
-            placeDefenders(
-                distributePositions(
-                    DefendersCountProvider.KnapsackDefendersCountProvider.generate()
-                )
+object RandomPositionsDefendersProvider : DefendersProvider {
+
+    override suspend fun generate() {
+        placeDefenders(
+            distributePositions(
+                KnapsackDefendersCountProvider.generate()
             )
-        }
-
-        private fun distributePositions(counts: List<Int>): Map<KClass<out Creature>, List<Vector2D>> {
-            val positions: MutableList<Vector2D> = WallFactory
-                .storage
-                .keys
-                .shuffled()
-                .toMutableList()
-
-            return Creature
-                .defenders
-                .zip(counts)
-                .associate {
-                    Pair(
-                        it.first,
-                        (1..it.second)
-                            .map { positions.removeFirst() }
-                    )
-                }
-        }
-
+        )
     }
 
+    private fun distributePositions(counts: List<Int>): Map<KClass<out Creature>, List<Vector2D>> {
+        val positions: MutableList<Vector2D> = WallFactory
+            .storage
+            .keys
+            .shuffled()
+            .toMutableList()
 
-    object OptimalPositionsDefendersProvider : DefendersProvider() {
-        override fun generate() {
-            TODO("Not yet implemented")
-        }
+        return Creature
+            .defenders
+            .zip(counts)
+            .associate {
+                Pair(
+                    it.first,
+                    (1..it.second)
+                        .map { positions.removeFirst() }
+                )
+            }
     }
 
+}
+
+
+object OptimalPositionsDefendersProvider : DefendersProvider {
+    override suspend fun generate() {
+        TODO("Not yet implemented")
+    }
 }
 
 

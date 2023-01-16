@@ -1,4 +1,4 @@
-# Village_Attack_Game
+# Village Attack Game
 A simple game created as an assignment for OOP subject.
 
 I have chosen Kotlin language because it's not Java :)

@@ -26,7 +26,7 @@ object WallFactory: PhysicalObjectFactory {
         globalStorage[position] = newWall
     }
 
-    fun setShapes() {
+    suspend fun setShapes() {
         storage.values.forEach { (it as PhysicalObject.Wall).setShape() }
     }
 }

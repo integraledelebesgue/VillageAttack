@@ -1,29 +1,47 @@
 package integraledelebesgue.ooplab.engine
 
+import integraledelebesgue.ooplab.map.generator.areas.BoundaryAreaProvider
+import integraledelebesgue.ooplab.map.generator.areas.MonsterAreaProvider
 import integraledelebesgue.ooplab.map.generator.castle.CastleProvider
+import integraledelebesgue.ooplab.map.generator.castle.FancyCastleProvider
+import integraledelebesgue.ooplab.map.generator.castle.SimpleCastleProvider
 import integraledelebesgue.ooplab.map.generator.defenders.DefendersProvider
+import integraledelebesgue.ooplab.map.generator.defenders.RandomPositionsDefendersProvider
+import integraledelebesgue.ooplab.map.generator.defenders.OptimalPositionsDefendersProvider
 
 
 enum class CastleMode {
     SimpleCastle,
     FancyCastle;
 
-    fun toProvider(gameProperties: GameProperties) {
-        when(this) {
-            SimpleCastle -> CastleProvider.SimpleCastleProvider
-            FancyCastle -> CastleProvider.FancyCastleProvider
+    fun toProvider(): CastleProvider {
+        return when(this) {
+            SimpleCastle -> SimpleCastleProvider
+            FancyCastle -> FancyCastleProvider
         }
     }
 }
+
 
 enum class DefenderPositionsMode {
     RandomPositions,
     OptimalPositions;
 
-    fun toProvider(gameProperties: GameProperties) {
-        when(this) {
-            RandomPositions -> DefendersProvider.RandomPositionsDefendersProvider
-            OptimalPositions -> DefendersProvider.OptimalPositionsDefendersProvider
+    fun toProvider(): DefendersProvider {
+        return when(this) {
+            RandomPositions -> RandomPositionsDefendersProvider
+            OptimalPositions -> OptimalPositionsDefendersProvider
+        }
+    }
+}
+
+
+enum class MonsterAreaMode {
+    BoundaryArea;
+
+    fun toProvider(): MonsterAreaProvider {
+        return when(this) {
+            BoundaryArea -> BoundaryAreaProvider
         }
     }
 }

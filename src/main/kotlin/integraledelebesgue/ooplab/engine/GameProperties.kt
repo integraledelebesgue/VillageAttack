@@ -7,8 +7,9 @@ object GameProperties{
 
     val maxDefendersCount: Int = 99
 
-    val wallMode: CastleMode = CastleMode.FancyCastle
+    val castleMode: CastleMode = CastleMode.FancyCastle
     val defenderPositionsMode: DefenderPositionsMode = DefenderPositionsMode.RandomPositions
+    val monsterAreaMode: MonsterAreaMode = MonsterAreaMode.BoundaryArea
 
     init {
         require(gold > 0) {"Gold must be positive, got $gold"}

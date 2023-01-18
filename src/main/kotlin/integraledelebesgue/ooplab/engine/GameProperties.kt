@@ -3,9 +3,9 @@ package integraledelebesgue.ooplab.engine
 object GameProperties{
     val gold: Int = 200
     val width: Int = 50
-    val height: Int = 35
+    val height: Int = 50
 
-    val maxDefendersCount: Int = 99
+    val maxDefendersCount: Int = 5
 
     val castleMode: CastleMode = CastleMode.FancyCastle
     val defenderPositionsMode: DefenderPositionsMode = DefenderPositionsMode.RandomPositions

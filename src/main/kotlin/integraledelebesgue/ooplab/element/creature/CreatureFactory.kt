@@ -12,6 +12,13 @@ sealed interface CreatureFactory {
     companion object {
         val attackersStorage: MutableSet<Creature> = HashSet()
         val defendersStorage: MutableSet<Creature> = HashSet()
+
+        suspend fun removeDeadCreatures() {
+            Creature.factory.values
+                .forEach {
+                        factory -> factory.storage.removeIf {!it.isAlive}
+                }
+        }
     }
 }
 

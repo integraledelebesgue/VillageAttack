@@ -11,14 +11,23 @@ sealed interface PhysicalObjectFactory {
 
     companion object {
         val globalStorage: MutableMap<Vector2D, PhysicalObject> = HashMap()
+
+        suspend fun removeBrokenPhysicalObjects() {
+            PhysicalObject.factory.values.forEach { objectFactory ->
+                objectFactory.storage.keys
+                    .removeIf {
+                        !(objectFactory.storage[it]?.isAlive ?: false)
+                    }
+            }
+        }
     }
 }
 
-object WallFactory: PhysicalObjectFactory {
+object WallFactory : PhysicalObjectFactory {
     override val storage: MutableMap<Vector2D, PhysicalObject> = LinkedHashMap()
 
     override fun create(position: Vector2D) {
-        if(storage.getOrDefault(position, null) != null)
+        if (storage.getOrDefault(position, null) != null)
             return
 
         val newWall: PhysicalObject.Wall = PhysicalObject.Wall(position, WallProperties)
@@ -31,11 +40,11 @@ object WallFactory: PhysicalObjectFactory {
     }
 }
 
-object MonsterTerritoryFactory: PhysicalObjectFactory {
+object MonsterTerritoryFactory : PhysicalObjectFactory {
     override val storage: MutableMap<Vector2D, PhysicalObject> = HashMap()
 
     override fun create(position: Vector2D) {
-        if(WallFactory.storage.getOrDefault(position, null) != null)
+        if (WallFactory.storage.getOrDefault(position, null) != null)
             return
 
         val newTerritory: PhysicalObject.MonsterArea = PhysicalObject.MonsterArea(position, MonsterAreaProperties)
@@ -44,11 +53,11 @@ object MonsterTerritoryFactory: PhysicalObjectFactory {
     }
 }
 
-object CastleTerritoryFactory: PhysicalObjectFactory {
+object CastleTerritoryFactory : PhysicalObjectFactory {
     override val storage: MutableMap<Vector2D, PhysicalObject> = HashMap()
 
     override fun create(position: Vector2D) {
-        if(WallFactory.storage.getOrDefault(position, null) != null)
+        if (WallFactory.storage.getOrDefault(position, null) != null)
             return
 
         val newTerritory: PhysicalObject.CastleArea = PhysicalObject.CastleArea(position, CastleAreaProperties)
@@ -57,11 +66,11 @@ object CastleTerritoryFactory: PhysicalObjectFactory {
     }
 }
 
-object FinalTerritoryFactory: PhysicalObjectFactory {
+object FinalTerritoryFactory : PhysicalObjectFactory {
     override val storage: MutableMap<Vector2D, PhysicalObject> = HashMap()
 
     override fun create(position: Vector2D) {
-        if(WallFactory.storage.getOrDefault(position, null) != null)
+        if (WallFactory.storage.getOrDefault(position, null) != null)
             return
 
         val newTerritory: PhysicalObject.FinalArea = PhysicalObject.FinalArea(position, FinalAreaProperties)

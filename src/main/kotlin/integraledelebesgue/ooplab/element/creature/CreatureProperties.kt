@@ -1,5 +1,7 @@
 package integraledelebesgue.ooplab.element.creature
 
+import javafx.scene.paint.Color
+
 abstract class CreatureProperties(
     val health: Int,
     val damage: Int,
@@ -9,6 +11,7 @@ abstract class CreatureProperties(
     val range: Int,
     val team: Team,  // Used to distinguish attackers from defenders. Expandable for multiple concurrent attacking teams, battle royale etc.
     val price: Int,
+    val color: Color
     //val behaviourProvider: Any  // TODO - introduce providers and change type
 ) {
     init {
@@ -29,7 +32,8 @@ object WarewolfProperties : CreatureProperties(
     FightStyle.MELEE,
     1,
     Team.ATTACKERS,
-    10
+    10,
+    Color.BROWN
 )
 
 object MummyProperties : CreatureProperties(
@@ -40,7 +44,8 @@ object MummyProperties : CreatureProperties(
     FightStyle.MELEE,
     2,
     Team.ATTACKERS,
-    10
+    10,
+    Color.BISQUE
 )
 
 object ZombieProperties : CreatureProperties(
@@ -51,7 +56,8 @@ object ZombieProperties : CreatureProperties(
     FightStyle.MELEE,
     3,
     Team.ATTACKERS,
-    10
+    10,
+    Color.DARKKHAKI
 )
 
 object ArcherProperties : CreatureProperties(
@@ -62,7 +68,8 @@ object ArcherProperties : CreatureProperties(
     FightStyle.RANGED,
     10,
     Team.DEFENDERS,
-    10
+    15,
+    Color.ALICEBLUE
 )
 
 object CrossbowerProperties : CreatureProperties(
@@ -73,7 +80,8 @@ object CrossbowerProperties : CreatureProperties(
     FightStyle.RANGED,
     15,
     Team.DEFENDERS,
-    10
+    30,
+    Color.PALEVIOLETRED
 )
 
 object MageProperties : CreatureProperties(
@@ -84,6 +92,7 @@ object MageProperties : CreatureProperties(
     FightStyle.MAGIC,
     10,
     Team.DEFENDERS,
-    10
+    50,
+    Color.CORAL
 )
 

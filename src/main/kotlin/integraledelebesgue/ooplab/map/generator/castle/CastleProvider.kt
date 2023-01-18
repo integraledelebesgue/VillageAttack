@@ -23,16 +23,20 @@ sealed class CastleProvider {
     protected val width: Int = GameProperties.width
     protected val height: Int = GameProperties.height
 
-    private val a: Int = (0.3 * width).toInt()
-    private val b: Int = (0.3 * height).toInt()
+    protected val a: Int = (0.2 * width).toInt()
+    private val b: Int = (0.2 * height).toInt()
 
     protected val centre: Vector2D = Vector2D(width / 2, height / 2)
 
-    private val pointsCount: Int = (PI * (1.5 * (a + b) - sqrt((a * b).toDouble()))).toInt()
+    private val pointsCount: Int = (PI * (1.5 * (a + b) - sqrt((a * b).toDouble()))).times(2.0).toInt()
 
-    protected val domain: D1Array<Double> = mk.linspace(0.0, 2 * PI, pointsCount)
+    protected val domain: D1Array<Double> = mk.linspace(0.0, 2.1 * PI, pointsCount)
 
     abstract suspend fun generate()
+
+    init {
+        println(pointsCount)
+    }
 
     protected fun buildWalls(xCoordinates: D1Array<Double>, yCoordinates: D1Array<Double>) {
         xCoordinates
@@ -52,8 +56,8 @@ object SimpleCastleProvider : CastleProvider() {
 
     override suspend fun generate() {
         buildWalls(
-            generatePoints(0.0),
-            generatePoints(PI/2)
+            generatePoints(0.0).plus(centre.x.toDouble()),
+            generatePoints(PI/2).plus(centre.y.toDouble())
         )
     }
 
@@ -61,7 +65,7 @@ object SimpleCastleProvider : CastleProvider() {
         return domain
             .plus(phase)
             .cos()
-            .times(0.3 * max(width, height))
+            .times(0.25 * max(width, height))
     }
 
 }
@@ -71,8 +75,8 @@ object FancyCastleProvider : CastleProvider() {
 
     override suspend fun generate() {
         buildWalls(
-            generatePoints().plus(centre.x.toDouble()),
-            generatePoints().plus(centre.y.toDouble())
+            generatePoints().plus(centre.x.toDouble().div(1.5)),
+            generatePoints().plus(centre.y.toDouble().div(1.5))
         )
     }
 
@@ -83,15 +87,13 @@ object FancyCastleProvider : CastleProvider() {
         for (i in 1..5) {
             coordinates.plusAssign(
                 domain
+                    .copy()
                     .plus(java.util.Random().nextGaussian())
                     .apply { if (Random.nextBoolean()) this.cos() else this.sin() }
-                    .map { it.pow(i) }
-                    .times(2 * Random.nextDouble() - 1.0)
+                    .apply { map {it.pow(i)} }
+                    .times(Random.nextDouble())
             )
         }
-
-        // Scaling to map size
-        coordinates.timesAssign(coordinates.max()!!.div(3.0 * max(width, height)))
 
         return coordinates
     }

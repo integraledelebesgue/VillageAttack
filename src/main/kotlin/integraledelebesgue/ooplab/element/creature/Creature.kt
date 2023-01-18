@@ -8,8 +8,9 @@ import kotlin.reflect.KClass
 
 sealed class Creature(var position: Vector2D, val creatureProperties: CreatureProperties) {
 
-    var health = 0
+    var health = creatureProperties.health
     var isAlive = true
+    val color = creatureProperties.color
 
     private val uuid: UUID = UUID.randomUUID()
 
@@ -20,10 +21,6 @@ sealed class Creature(var position: Vector2D, val creatureProperties: CreaturePr
 
     fun testCollisionWithWall(): Boolean {
         return WallFactory.storage[position] != null
-    }
-
-    init {
-        health = creatureProperties.health
     }
 
     companion object {

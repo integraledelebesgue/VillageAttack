@@ -12,8 +12,8 @@ import integraledelebesgue.ooplab.map.generator.castle.CastleProvider
 import integraledelebesgue.ooplab.map.generator.castle.FancyCastleProvider
 import integraledelebesgue.ooplab.map.generator.castle.SimpleCastleProvider
 import integraledelebesgue.ooplab.map.generator.defenders.DefendersProvider
-import integraledelebesgue.ooplab.map.generator.defenders.RandomPositionsDefendersProvider
 import integraledelebesgue.ooplab.map.generator.defenders.OptimalPositionsDefendersProvider
+import integraledelebesgue.ooplab.map.generator.defenders.RandomPositionsDefendersProvider
 
 
 enum class CastleMode {

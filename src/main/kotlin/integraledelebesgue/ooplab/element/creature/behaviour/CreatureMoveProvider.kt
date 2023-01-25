@@ -5,7 +5,6 @@ import integraledelebesgue.ooplab.element.Vector2D
 import integraledelebesgue.ooplab.element.creature.Creature
 import integraledelebesgue.ooplab.element.physicalobject.WallFactory
 import integraledelebesgue.ooplab.engine.GameProperties
-import integraledelebesgue.ooplab.map.generator.castle.CastleProvider
 
 sealed interface CreatureMoveProvider {
 

@@ -2,7 +2,7 @@ package integraledelebesgue.ooplab.element.creature
 
 import integraledelebesgue.ooplab.element.Vector2D
 import integraledelebesgue.ooplab.element.physicalobject.WallFactory
-import java.util.UUID
+import java.util.*
 import kotlin.reflect.KClass
 
 sealed class Creature(

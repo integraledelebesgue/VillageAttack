@@ -1,7 +1,7 @@
 package integraledelebesgue.ooplab.element
 
-import kotlin.math.max
 import kotlin.math.abs
+import kotlin.math.max
 import kotlin.math.pow
 import kotlin.math.sqrt
 

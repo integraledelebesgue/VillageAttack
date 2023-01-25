@@ -2,7 +2,6 @@ package integraledelebesgue.ooplab.map.generator.attackers
 
 import integraledelebesgue.ooplab.element.Vector2D
 import integraledelebesgue.ooplab.element.creature.Creature
-import kotlinx.coroutines.flow.Flow
 import kotlin.reflect.KClass
 
 sealed interface AttackersProvider {

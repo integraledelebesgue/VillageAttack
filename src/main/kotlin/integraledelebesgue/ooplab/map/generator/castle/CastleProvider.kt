@@ -12,9 +12,9 @@ import org.jetbrains.kotlinx.multik.ndarray.data.D1
 import org.jetbrains.kotlinx.multik.ndarray.data.D1Array
 import org.jetbrains.kotlinx.multik.ndarray.data.NDArray
 import org.jetbrains.kotlinx.multik.ndarray.operations.*
-import org.jetbrains.kotlinx.multik.ndarray.operations.plus
-import org.jetbrains.kotlinx.multik.ndarray.operations.times
-import kotlin.math.*
+import kotlin.math.PI
+import kotlin.math.max
+import kotlin.math.sqrt
 import kotlin.random.Random
 
 

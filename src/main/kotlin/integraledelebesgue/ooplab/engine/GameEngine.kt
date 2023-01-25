@@ -21,8 +21,6 @@ object GameEngine: Runnable {
         @Synchronized get
 
     private var active: Boolean = true
-        @Synchronized set
-        @Synchronized get
 
     private fun setupMap() = runBlocking {
         async {
@@ -93,6 +91,8 @@ object GameEngine: Runnable {
         async {
             removeDeadCreatures()
             removeBrokenPhysicalObjects()
+            checkForWin()
+            checkForStale()
         }
             .await()
 
@@ -108,6 +108,9 @@ object GameEngine: Runnable {
             Platform.runLater {
                 gui.changeAttackerPosition(positionChange)
             }
+
+        for(attack in GameProperties.attackersBehaviourProvider.toProvider().attack())
+            apply {}
     }
 
     private suspend fun proceedDefenders() {
@@ -123,6 +126,21 @@ object GameEngine: Runnable {
 
     private suspend fun removeBrokenPhysicalObjects() {
         PhysicalObjectFactory.removeBrokenPhysicalObjects()
+    }
+
+
+    private fun checkForStale() {
+        if(CreatureFactory.attackersStorage.none { it.isAlive }) {
+            println("Defenders won!")
+            active = false
+        }
+    }
+
+    private fun checkForWin() {
+        if(CreatureFactory.attackersStorage.any { it.position == GameProperties.castleMode.toProvider().centre }) {
+            println("Monsters won!")
+            active = false
+        }
     }
 
 }

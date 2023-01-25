@@ -2,6 +2,7 @@ package integraledelebesgue.ooplab.element.creature.behaviour
 
 import integraledelebesgue.ooplab.element.Vector2D
 import integraledelebesgue.ooplab.element.creature.CreatureFactory
+import integraledelebesgue.ooplab.element.physicalobject.PhysicalObject
 import integraledelebesgue.ooplab.element.physicalobject.WallFactory
 
 sealed interface AttackersBehaviourProvider {
@@ -18,22 +19,17 @@ object GreedyAttackersBehaviourProvider: AttackersBehaviourProvider {
         CreatureFactory.attackersStorage
             .filter { it.isAlive }
             .forEach { attacker ->
-                val toAttack = WallFactory.storage
-                    .filter { (position, wall) ->
-                        position.distanceTo(attacker.position) <= attacker.range
-                    }
-                    .minBy { (position, wall) ->
+                WallFactory.storage
+                    .minBy { (position: Vector2D, wall: PhysicalObject?) ->
                         position.distanceTo(attacker.position)
                     }
-
-                println("$attacker hits $toAttack")
-                toAttack.value.takeDamage(attacker.damage)
-
-                attacker.increaseAttack()
-
-                yield(
-                    Pair(attacker.position, toAttack.key)
-                )
+                    .let {
+                        if(it.key.distanceTo(attacker.position) <= attacker.range) {
+                            it.value.takeDamage(attacker.damage)
+                            println("$attacker hits ${it.value}")
+                            yield(Pair(attacker.position, it.key))
+                        }
+                    }
             }
     }
 

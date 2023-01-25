@@ -15,19 +15,17 @@ object StationaryDefendersBehaviourProvider: DefendersBehaviourProvider {
 
     override suspend fun attack(): Sequence<Pair<Vector2D, Vector2D>> = sequence {
         CreatureFactory.defendersStorage
-            .filter { it.hasAttack and it.isAlive }
+            .filter { it.isAlive }
             .forEach { defender ->
-                val toAttack = CreatureFactory.defendersStorage
-                    .filter { it.isAlive and (it.position.distanceTo(defender.position) <= defender.range) }
+                val toAttack = CreatureFactory.attackersStorage
                     .minBy {it.position.distanceTo(defender.position)}
-
-                defender.increaseAttack()
-
-                toAttack.takeDamage(defender.damage)
-
-                yield(
-                    Pair(defender.position, toAttack.position)
-                )
+                    .let {
+                        if(it.isAlive and (it.position.distanceTo(defender.position) <= defender.range)) {
+                            it.takeDamage(defender.damage)
+                            yield(Pair(defender.position, it.position))
+                            println("$defender hits $it")
+                        }
+                    }
             }
     }
 

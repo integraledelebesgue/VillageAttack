@@ -9,6 +9,10 @@ sealed interface PhysicalObjectFactory {
 
     fun create(position: Vector2D)
 
+    fun isOccupied(position: Vector2D): Boolean {
+        return storage[position] != null
+    }
+
     companion object {
         val globalStorage: MutableMap<Vector2D, PhysicalObject> = HashMap()
 
@@ -40,7 +44,7 @@ object WallFactory : PhysicalObjectFactory {
     }
 }
 
-object MonsterTerritoryFactory : PhysicalObjectFactory {
+object MonsterAreaFactory : PhysicalObjectFactory {
     override val storage: MutableMap<Vector2D, PhysicalObject> = HashMap()
 
     override fun create(position: Vector2D) {
@@ -53,7 +57,7 @@ object MonsterTerritoryFactory : PhysicalObjectFactory {
     }
 }
 
-object CastleTerritoryFactory : PhysicalObjectFactory {
+object CastleAreaFactory : PhysicalObjectFactory {
     override val storage: MutableMap<Vector2D, PhysicalObject> = HashMap()
 
     override fun create(position: Vector2D) {
@@ -66,7 +70,7 @@ object CastleTerritoryFactory : PhysicalObjectFactory {
     }
 }
 
-object FinalTerritoryFactory : PhysicalObjectFactory {
+object FinalAreaFactory : PhysicalObjectFactory {
     override val storage: MutableMap<Vector2D, PhysicalObject> = HashMap()
 
     override fun create(position: Vector2D) {

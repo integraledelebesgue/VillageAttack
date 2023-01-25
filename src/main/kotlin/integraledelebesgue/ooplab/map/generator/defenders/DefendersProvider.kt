@@ -3,9 +3,8 @@ package integraledelebesgue.ooplab.map.generator.defenders
 import integraledelebesgue.ooplab.element.Vector2D
 import integraledelebesgue.ooplab.element.creature.Creature
 import integraledelebesgue.ooplab.element.physicalobject.WallFactory
-import kotlin.math.absoluteValue
-import kotlin.random.Random
 import kotlin.reflect.KClass
+
 
 sealed interface DefendersProvider {
 

@@ -29,16 +29,12 @@ object KnapsackDefendersCountProvider : DefendersCountProvider {
 
     private val count = model.intVarArray("count", Creature.defenders.size, 0, GameProperties.maxDefendersCount)
 
-    private val cost = Creature.properties
-        .filter { it.key in Creature.defenders }
-        .values
-        .map { it.price }
+    private val cost = Creature.defenders
+        .map {Creature.properties[it]!!.price}
         .toIntArray()
 
-    private val damage = Creature.properties
-        .filter { it.key in Creature.defenders }
-        .values
-        .map { it.damage }
+    private val damage = Creature.defenders
+        .map {Creature.properties[it]!!.damage}
         .toIntArray()
 
     private val total_damage = model.intVar("total_damage", 0, 999, true)

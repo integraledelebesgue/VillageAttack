@@ -26,17 +26,13 @@ sealed class CastleProvider {
     protected val a: Int = (0.2 * width).toInt()
     private val b: Int = (0.2 * height).toInt()
 
-    protected val centre: Vector2D = Vector2D(width / 2, height / 2)
+    val centre: Vector2D = Vector2D(width / 2, height / 2)
 
-    private val pointsCount: Int = (PI * (1.5 * (a + b) - sqrt((a * b).toDouble()))).times(2.0).toInt()
+    private val pointsCount: Int = (PI * (1.5 * (a + b) - sqrt((a * b).toDouble()))).times(5.0).toInt()
 
     protected val domain: D1Array<Double> = mk.linspace(0.0, 2.1 * PI, pointsCount)
 
     abstract suspend fun generate()
-
-    init {
-        println(pointsCount)
-    }
 
     protected fun buildWalls(xCoordinates: D1Array<Double>, yCoordinates: D1Array<Double>) {
         xCoordinates
@@ -75,6 +71,25 @@ object FancyCastleProvider : CastleProvider() {
 
     override suspend fun generate() {
         buildWalls(
+            generatePoints(0.0).plus(centre.x.toDouble()).map{ it.plus(5 * Random.nextDouble() - 2.5) },
+            generatePoints(PI/2).plus(centre.y.toDouble()).map{ it.plus( 5 * Random.nextDouble() - 2.5) }
+        )
+    }
+
+    private fun generatePoints(phase: Double): D1Array<Double> {
+        return domain
+            .plus(phase)
+            .cos()
+            .times(0.25 * max(width, height))
+    }
+
+}
+
+
+object UpcomingCastleProvider : CastleProvider() {
+    /// Upcoming feature, doesn't work at the moment.
+    override suspend fun generate() {
+        buildWalls(
             generatePoints().plus(centre.x.toDouble().div(1.5)),
             generatePoints().plus(centre.y.toDouble().div(1.5))
         )
@@ -88,9 +103,10 @@ object FancyCastleProvider : CastleProvider() {
             coordinates.plusAssign(
                 domain
                     .copy()
+                    .times(i.toDouble())
                     .plus(java.util.Random().nextGaussian())
                     .apply { if (Random.nextBoolean()) this.cos() else this.sin() }
-                    .apply { map {it.pow(i)} }
+                    //.apply { map {it.pow(i)} }
                     .times(Random.nextDouble())
             )
         }

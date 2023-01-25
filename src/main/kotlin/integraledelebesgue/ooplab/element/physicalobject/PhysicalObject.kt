@@ -8,12 +8,21 @@ import java.util.BitSet
 import kotlin.reflect.KClass
 
 
-sealed class PhysicalObject(position: Vector2D, properties: PhysicalObjectProperties) {
+sealed class PhysicalObject(private val position: Vector2D, properties: PhysicalObjectProperties) {
 
     var health: Int = properties.health
     var isAlive: Boolean = true
 
     val color = properties.color
+
+    fun takeDamage(damage: Int) {
+        health -= damage
+        if(health <= 0) isAlive = false
+    }
+
+    override fun toString(): String {
+        return "${this::class.simpleName} ${this.position}, HP: $health"
+    }
 
     class Wall(position: Vector2D, properties: PhysicalObjectProperties): PhysicalObject(position, properties) {
 

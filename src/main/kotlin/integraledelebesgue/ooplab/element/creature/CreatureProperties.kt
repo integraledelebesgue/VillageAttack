@@ -1,6 +1,9 @@
 package integraledelebesgue.ooplab.element.creature
 
+import integraledelebesgue.ooplab.element.creature.behaviour.CreatureMoveProvider
+import integraledelebesgue.ooplab.element.creature.behaviour.GreedyCreatureMoveProvider
 import javafx.scene.paint.Color
+import kotlin.random.Random
 
 abstract class CreatureProperties(
     val health: Int,
@@ -9,10 +12,10 @@ abstract class CreatureProperties(
     val movesPerTurn: Int,
     val fightStyle: FightStyle,
     val range: Int,
-    val team: Team,  // Used to distinguish attackers from defenders. Expandable for multiple concurrent attacking teams, battle royale etc.
+    val team: Team,
     val price: Int,
-    val color: Color
-    //val behaviourProvider: Any  // TODO - introduce providers and change type
+    val color: Color,
+    val moveProvider: CreatureMoveProvider? = null
 ) {
     init {
         require(health > 0) {"Health must be positive, got $health"}
@@ -33,7 +36,8 @@ object WarewolfProperties : CreatureProperties(
     1,
     Team.ATTACKERS,
     10,
-    Color.BROWN
+    Color.BROWN,
+    GreedyCreatureMoveProvider
 )
 
 object MummyProperties : CreatureProperties(
@@ -45,7 +49,8 @@ object MummyProperties : CreatureProperties(
     2,
     Team.ATTACKERS,
     10,
-    Color.BISQUE
+    Color.BISQUE,
+    GreedyCreatureMoveProvider
 )
 
 object ZombieProperties : CreatureProperties(
@@ -57,12 +62,13 @@ object ZombieProperties : CreatureProperties(
     3,
     Team.ATTACKERS,
     10,
-    Color.DARKKHAKI
+    Color.DARKKHAKI,
+    GreedyCreatureMoveProvider
 )
 
 object ArcherProperties : CreatureProperties(
     50,
-    30,
+    20 + Random.nextInt() %  5,
     4,
     5,
     FightStyle.RANGED,
@@ -74,25 +80,25 @@ object ArcherProperties : CreatureProperties(
 
 object CrossbowerProperties : CreatureProperties(
     50,
-    50,
+    50 + Random.nextInt() %  5,
     2,
     3,
     FightStyle.RANGED,
     15,
     Team.DEFENDERS,
-    30,
+    37,
     Color.PALEVIOLETRED
 )
 
 object MageProperties : CreatureProperties(
     30,
-    60,
+    102 + Random.nextInt() %  5,
     3,
     3,
     FightStyle.MAGIC,
     10,
     Team.DEFENDERS,
-    50,
+    80,
     Color.CORAL
 )
 

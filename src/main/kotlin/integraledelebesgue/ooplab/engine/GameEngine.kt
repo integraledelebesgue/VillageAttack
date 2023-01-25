@@ -3,19 +3,20 @@ package integraledelebesgue.ooplab.engine
 import integraledelebesgue.ooplab.app.MainWindow
 import integraledelebesgue.ooplab.element.creature.CreatureFactory
 import integraledelebesgue.ooplab.element.physicalobject.PhysicalObjectFactory
-import integraledelebesgue.ooplab.element.physicalobject.WallFactory
-import javafx.application.Application
 import javafx.application.Platform
-import javafx.stage.Stage
 import kotlinx.coroutines.*
-import java.lang.Runnable
+import java.lang.Thread.sleep
 
 
 object GameEngine: Runnable {
 
     lateinit var gui: MainWindow
 
-    private var paused: Boolean = true
+    var initialized: Boolean = false
+        @Synchronized set(state) { if(!field) field = state }
+        @Synchronized get
+
+    var paused: Boolean = true
         @Synchronized set
         @Synchronized get
 
@@ -23,18 +24,7 @@ object GameEngine: Runnable {
         @Synchronized set
         @Synchronized get
 
-    init {
-        print("Setup... ")
-        setupGame()
-        println("Done!")
-    }
-
-    @Synchronized
-    fun toggleState() {
-        paused.xor(true)
-    }
-
-    private fun setupGame() = runBlocking {
+    private fun setupMap() = runBlocking {
         async {
             GameProperties.castleMode
                 .toProvider()
@@ -45,40 +35,58 @@ object GameEngine: Runnable {
                 .generate()
         }
             .await()
+    }
 
-        println("Physical object generation finished")
-        println("Generated ${PhysicalObjectFactory.globalStorage.size} objects")
-        println(
-            "Min x: ${PhysicalObjectFactory.globalStorage.keys.minBy { it.x }}\n" +
-            "Max x: ${PhysicalObjectFactory.globalStorage.keys.maxBy { it.x }}\n" +
-            "Min y: ${PhysicalObjectFactory.globalStorage.keys.minBy { it.y }}\n" +
-            "Max y: ${PhysicalObjectFactory.globalStorage.keys.maxBy { it.y }}"
-        )
-
+    private fun setupDefenders() = runBlocking {
         async {
             GameProperties.defenderPositionsMode
                 .toProvider()
                 .generate()
         }
             .await()
-
-        println("Defender generation finished")
-        println("Generated ${CreatureFactory.defendersStorage.size}")
     }
 
     override fun run() {
         try {
-            nextTurn()
-            do {
-                if(paused) continue
-                nextTurn()
-            } while(active)
+            setupMap()
+
+            Platform.runLater {
+                gui.drawPhysicalObjects()
+            }
+
+            while(!initialized) {
+                sleep(100)
+            }
+
+            setupDefenders()
+
+            Platform.runLater {
+                gui.drawDefenders()
+            }
+
+            while(paused) {
+                sleep(100)
+            }
+
+            println("Battle begins!")
+
+            simulationStage()
         }
         catch(ignored: InterruptedException) { }
         finally {
             println("Game has ended!")
         }
 
+    }
+
+    @Throws(InterruptedException::class)
+    private fun simulationStage() {
+        do {
+            println("Next turn!")
+            if(paused) continue
+            nextTurn()
+            sleep(1000)
+        } while(active)
     }
 
     private fun nextTurn() = runBlocking {
@@ -89,23 +97,24 @@ object GameEngine: Runnable {
             .await()
 
         async {
-            proceedAttackers()
             proceedDefenders()
+            proceedAttackers()
         }
             .await()
-
-        Platform.runLater {
-            gui.drawPhysicalObjects()
-            gui.drawCreatures()
-        }
     }
 
     private suspend fun proceedAttackers() {
-
+        for(positionChange in GameProperties.attackersBehaviourProvider.toProvider().move())
+            Platform.runLater {
+                gui.changeAttackerPosition(positionChange)
+            }
     }
 
     private suspend fun proceedDefenders() {
-
+        for(attack in GameProperties.defendersBehaviourMode.toProvider().attack())
+            Platform.runLater{
+                gui.drawAttack(attack)
+            }
     }
 
     private suspend fun removeDeadCreatures() {

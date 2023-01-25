@@ -4,7 +4,9 @@ import integraledelebesgue.ooplab.element.Vector2D
 import integraledelebesgue.ooplab.element.creature.Creature
 import integraledelebesgue.ooplab.element.creature.CreatureFactory
 import integraledelebesgue.ooplab.element.physicalobject.MonsterAreaFactory
+import integraledelebesgue.ooplab.element.physicalobject.PhysicalObject
 import integraledelebesgue.ooplab.element.physicalobject.PhysicalObjectFactory
+import integraledelebesgue.ooplab.element.physicalobject.WallFactory
 import integraledelebesgue.ooplab.engine.GameEngine
 import integraledelebesgue.ooplab.engine.GameProperties
 import javafx.application.Application
@@ -17,13 +19,11 @@ import javafx.scene.input.MouseEvent
 import javafx.scene.layout.GridPane
 import javafx.scene.paint.Color
 import javafx.scene.shape.Circle
-import javafx.scene.shape.Line
 import javafx.scene.shape.Rectangle
 import javafx.scene.shape.Shape
 import javafx.scene.text.Font
 import javafx.scene.text.FontWeight
 import javafx.stage.Stage
-import java.lang.Thread.sleep
 import kotlin.reflect.KClass
 import kotlin.system.exitProcess
 
@@ -33,9 +33,9 @@ class MainWindow : Application() {
     private lateinit var buyState: KClass<out Creature>
     private lateinit var clickHandler: (MouseEvent) -> Unit
 
-    private val physicalObjectIndicators: MutableMap<Vector2D, Shape> = hashMapOf()
-    private val defenderIndicators: MutableMap<Vector2D, Shape> = hashMapOf()
-    private val attackerIndicators: MutableMap<Vector2D, Shape> = hashMapOf()
+    private var attackerMarkers: MutableList<Shape> = mutableListOf()
+    private var wallMarkers: List<Shape> = listOf()
+    private var defenderMarkers: List<Shape> = listOf()
 
     private val scene = GridPane().apply {
         hgap = 1.0
@@ -116,7 +116,7 @@ class MainWindow : Application() {
         add(buyWerewolfButton, lastColumn, rowIndex)
         rowIndex++
 
-        val finishAttackerSetupButton = Button("Finish").apply {
+        val finishAttackerSetupButton = Button("Start battle").apply {
             font = Font.font(null, FontWeight.SEMI_BOLD, 13.5)
 
             setOnAction {
@@ -150,11 +150,16 @@ class MainWindow : Application() {
     }
 
     fun drawPhysicalObjects() {
+        val wallList: MutableList<Shape> = mutableListOf()
+
         PhysicalObjectFactory.globalStorage.forEach { (position, physicalObject) ->
             scene.add(
                 run {
                     val objectRectangle = Rectangle(25.0, 25.0)
-                    physicalObjectIndicators[position] = objectRectangle
+
+                    if(physicalObject::class == PhysicalObject.Wall::class)
+                        wallList.add(objectRectangle)
+
                     objectRectangle.fill = physicalObject.color
                     objectRectangle
                 },
@@ -162,59 +167,93 @@ class MainWindow : Application() {
                 position.y
             )
         }
+
+        wallMarkers = wallList.toList()
+    }
+
+    fun drawWalls() {
+        wallMarkers.forEach { scene.children.remove(it) }
+
+        wallMarkers = WallFactory.storage
+            .filter { it.value.isAlive }
+            .map {
+                val objectRectangle = Rectangle(25.0, 25.0)
+                objectRectangle.fill = it.value.color
+
+                scene.add(
+                    objectRectangle,
+                    it.key.x,
+                    it.key.y
+                )
+
+                objectRectangle
+            }
+            .toList()
     }
 
     fun drawDefenders() {
-        CreatureFactory.defendersStorage.forEach {
-            scene.add(
-                run {
-                    val creatureCircle = Circle(12.5)
-                    defenderIndicators[it.position] = creatureCircle
-                    creatureCircle.fill = it.color
-                    creatureCircle
-                },
-                it.position.x,
-                it.position.y
-            )
-        }
+        defenderMarkers.forEach { scene.children.remove(it) }
+
+        defenderMarkers = CreatureFactory.defendersStorage
+            .filter { it.isAlive }
+            .map {
+                val creatureCircle = Circle(12.5)
+                creatureCircle.fill = it.color
+
+                scene.add(
+                    creatureCircle,
+                    it.position.x,
+                    it.position.y
+                )
+
+                creatureCircle
+            }
+            .toList()
+    }
+
+    fun drawAttackers() {
+        attackerMarkers.forEach { scene.children.remove(it) }
+
+        attackerMarkers = CreatureFactory.attackersStorage
+            .filter { it.isAlive }
+            .map {
+                val creatureCircle = Circle(12.5)
+                creatureCircle.fill = Creature.properties[it::class]!!.color
+
+                scene.add(
+                    creatureCircle,
+                    it.position.x,
+                    it.position.y
+                )
+
+                creatureCircle
+            }
+            .toMutableList()
     }
 
     private fun drawAttacker(attackerClass: KClass<out Creature>, position: Vector2D) {
+        val creatureCircle = Circle(12.5).apply {
+            fill = Creature.properties[attackerClass]!!.color
+        }
+
         scene.add(
-            run {
-                val creatureCircle = Circle(12.5)
-                defenderIndicators[position] = creatureCircle
-                creatureCircle.fill = Creature.properties[attackerClass]!!.color
-                creatureCircle
-            },
+            creatureCircle,
             position.x,
             position.y
         )
-    }
 
-    fun changeAttackerPosition(positionChange: Pair<Vector2D, Vector2D>) {
-        attackerIndicators[positionChange.first]?.let {
-            attackerIndicators[positionChange.second] = it
-            it.relocate(
-                positionChange.second.x.toDouble(),
-                positionChange.second.y.toDouble()
-            )
-        }
-
-        attackerIndicators.keys.remove(positionChange.first)
+        attackerMarkers.add(creatureCircle)
     }
 
     fun drawAttack(attack: Pair<Vector2D, Vector2D>) {
-        val attackLine = Line(
-            attack.first.x.toDouble(),
-            attack.first.y.toDouble(),
-            attack.second.x.toDouble(),
-            attack.second.y.toDouble()
+        /*val attackLine = Line(
+            attack.first.x.toDouble().times(25),
+            attack.first.y.toDouble().times(25),
+            attack.second.x.toDouble().times(25),
+            attack.second.y.toDouble().times(25)
         )
-
-        scene.add(attackLine, attack.first.x, attack.first.y)
-        sleep(100)
-        scene.children.remove(attackLine)
+        scene.add(attackLine, attack.first.x, attack.first.y)*/
+        // Upcoming feature
     }
 
     private fun startAttackerCollection() {

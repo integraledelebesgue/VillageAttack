@@ -20,6 +20,7 @@ object GreedyAttackersBehaviourProvider: AttackersBehaviourProvider {
             .filter { it.isAlive }
             .forEach { attacker ->
                 WallFactory.storage
+                    .filter { it.value.isAlive }
                     .minBy { (position: Vector2D, wall: PhysicalObject?) ->
                         position.distanceTo(attacker.position)
                     }
@@ -41,6 +42,7 @@ object GreedyAttackersBehaviourProvider: AttackersBehaviourProvider {
                 val newPosition: Vector2D = it.moveProvider!!.generate(it)
 
                 println("$it moves to $newPosition!")
+                it.position = newPosition
 
                 yield(
                     Pair(oldPosition, newPosition)

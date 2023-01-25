@@ -9,14 +9,4 @@ enum class Direction(val unitVector: Vector2D) {
     SOUTHWEST(Vector2D(-1, -1)),
     WEST(Vector2D(-1, 0)),
     NORTHWEST(Vector2D(-1, 1));
-
-    fun rotate(steps: Int): Direction {
-        return values()[(this.ordinal + steps % 8 + 8) % 8]
-    }
-
-    companion object {
-        fun randomDirection(): Direction {
-            return values().random()
-        }
-    }
 }

@@ -16,20 +16,20 @@ sealed interface CreatureMoveProvider {
 
 object GreedyCreatureMoveProvider: CreatureMoveProvider {
 
+    @Synchronized
     override fun generate(creature: Creature): Vector2D {
         val newPosition = creature.position + Direction.values()
             .minBy {
-                (it.unitVector + creature.position).distanceTo(
-                    GameProperties.castleMode.toProvider().centre
-                )
+                (it.unitVector + creature.position)
+                    .euclideanDistanceTo(
+                        GameProperties.castleMode.toProvider().centre
+                    )
             }
             .unitVector
-            //.times(creature.movesPerTurn)
 
         if(WallFactory.isOccupied(newPosition))
             return creature.position
 
-        creature.position = newPosition
         return newPosition
     }
 

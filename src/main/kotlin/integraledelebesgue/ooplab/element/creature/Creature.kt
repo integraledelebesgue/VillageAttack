@@ -12,11 +12,6 @@ sealed class Creature(
     private val uuid: UUID = UUID.randomUUID()
 
     var position: Vector2D = initialPosition
-        get() = field
-        set(value) {
-            if(!testCollisionWithWall(value))
-                field = value
-        }
 
     var health = creatureProperties.health
     var isAlive = true
@@ -82,7 +77,6 @@ sealed class Creature(
     class Crossbower(initialPosition: Vector2D, creatureProperties: CreatureProperties): Creature(initialPosition, creatureProperties)
 
     class Mage(initialPosition: Vector2D, creatureProperties: CreatureProperties): Creature(initialPosition, creatureProperties)
-
 
     override fun toString(): String {
         return "${this::class.simpleName} #$uuid"

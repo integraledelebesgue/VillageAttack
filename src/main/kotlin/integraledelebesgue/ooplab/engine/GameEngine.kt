@@ -2,7 +2,6 @@ package integraledelebesgue.ooplab.engine
 
 import integraledelebesgue.ooplab.app.MainWindow
 import integraledelebesgue.ooplab.element.creature.CreatureFactory
-import integraledelebesgue.ooplab.element.physicalobject.PhysicalObjectFactory
 import javafx.application.Platform
 import kotlinx.coroutines.*
 import java.lang.Thread.sleep
@@ -70,7 +69,7 @@ object GameEngine: Runnable {
 
             simulationStage()
         }
-        catch(ignored: InterruptedException) { }
+        catch(ignored: Exception) { }
         finally {
             println("Game has ended!")
         }
@@ -83,31 +82,29 @@ object GameEngine: Runnable {
             println("Next turn!")
             if(paused) continue
             nextTurn()
-            sleep(1000)
+            sleep(500)
         } while(active)
     }
 
     private fun nextTurn() = runBlocking {
         async {
-            removeDeadCreatures()
-            removeBrokenPhysicalObjects()
             checkForWin()
             checkForStale()
-        }
-            .await()
-
-        async {
             proceedDefenders()
             proceedAttackers()
         }
             .await()
+
+        Platform.runLater {
+            gui.drawWalls()
+            gui.drawAttackers()
+            gui.drawDefenders()
+        }
     }
 
     private suspend fun proceedAttackers() {
         for(positionChange in GameProperties.attackersBehaviourProvider.toProvider().move())
-            Platform.runLater {
-                gui.changeAttackerPosition(positionChange)
-            }
+            apply {}
 
         for(attack in GameProperties.attackersBehaviourProvider.toProvider().attack())
             apply {}
@@ -120,24 +117,15 @@ object GameEngine: Runnable {
             }
     }
 
-    private suspend fun removeDeadCreatures() {
-        CreatureFactory.removeDeadCreatures()
-    }
-
-    private suspend fun removeBrokenPhysicalObjects() {
-        PhysicalObjectFactory.removeBrokenPhysicalObjects()
-    }
-
-
-    private fun checkForStale() {
+    private suspend fun checkForStale() {
         if(CreatureFactory.attackersStorage.none { it.isAlive }) {
             println("Defenders won!")
             active = false
         }
     }
 
-    private fun checkForWin() {
-        if(CreatureFactory.attackersStorage.any { it.position == GameProperties.castleMode.toProvider().centre }) {
+    private suspend fun checkForWin() {
+        if(CreatureFactory.attackersStorage.any { it.position.distanceTo(GameProperties.castleMode.toProvider().centre) <= 2 }) {
             println("Monsters won!")
             active = false
         }

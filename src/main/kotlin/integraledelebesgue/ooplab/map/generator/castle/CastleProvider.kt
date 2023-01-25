@@ -28,7 +28,7 @@ sealed class CastleProvider {
 
     val centre: Vector2D = Vector2D(width / 2, height / 2)
 
-    private val pointsCount: Int = (PI * (1.5 * (a + b) - sqrt((a * b).toDouble()))).times(5.0).toInt()
+    private val pointsCount: Int = (PI * (1.5 * (a + b) - sqrt((a * b).toDouble()))).times(6.5).toInt()
 
     protected val domain: D1Array<Double> = mk.linspace(0.0, 2.1 * PI, pointsCount)
 

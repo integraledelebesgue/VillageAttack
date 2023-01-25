@@ -29,7 +29,7 @@ abstract class CreatureProperties(
 
 object WarewolfProperties : CreatureProperties(
     100,
-    20,
+    100,
     3,
     5,
     FightStyle.MELEE,
@@ -46,7 +46,7 @@ object MummyProperties : CreatureProperties(
     5,
     3,
     FightStyle.MELEE,
-    2,
+    1,
     Team.ATTACKERS,
     10,
     Color.BISQUE,
@@ -59,10 +59,10 @@ object ZombieProperties : CreatureProperties(
     3,
     5,
     FightStyle.MELEE,
-    3,
+    1,
     Team.ATTACKERS,
     10,
-    Color.DARKKHAKI,
+    Color.SLATEGRAY,
     GreedyCreatureMoveProvider
 )
 

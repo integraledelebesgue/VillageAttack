@@ -1,4 +1,6 @@
 # Village Attack Game
+Warning - An awful boilerplate. To be fixed..
+
 A simple game created as an assignment for OOP subject.
 
 I have chosen Kotlin language because it's not Java :)
